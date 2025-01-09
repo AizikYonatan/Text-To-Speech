@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="watermark">
+        Made by Yonatan Aizik<br>
+        To use this website for commercial purposes<br>
+        you will pay the sum of 7 new sheckels.
+    </div>
+    
+    <div class="container">
+        <h1>AI Voice Generator</h1>
+        
+        <div class="voice-selection">
+            <h2>Select a Voice</h2>
+            <!-- Voice dropdown will be inserted here by JavaScript -->
+        </div>
+
+        <div class="text-input-section">
+            <h2>Enter Your Text</h2>
+            <textarea 
+                id="textInput" 
+                maxlength="500" 
+                placeholder="Enter text here (max 500 characters)..."
+            ></textarea>
+            <div class="char-count">Characters: <span id="charCount">0</span>/500</div>
+        </div>
+
+        <div class="controls-section">
+            <h2>Voice Controls</h2>
+            <div class="control-group">
+                <label>Speed</label>
+                <input type="range" id="speedControl" min="0.5" max="2" step="0.1" value="1">
+                <span class="control-value" id="speedValue">1x</span>
+            </div>
+            <div class="control-group">
+                <label>Pitch</label>
+                <input type="range" id="pitchControl" min="0.5" max="2" step="0.1" value="1">
+                <span class="control-value" id="pitchValue">1x</span>
+            </div>
+            <div class="control-group">
+                <label>Volume</label>
+                <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="1">
+                <span class="control-value" id="volumeValue">100%</span>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button id="generateBtn" class="primary-btn">Generate Speech</button>
+            <button id="playBtn" class="secondary-btn" disabled>Play Preview</button>
+            <button id="downloadBtn" class="secondary-btn" disabled>Download MP3</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
