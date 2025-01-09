@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const voiceSelect = document.createElement('select');
     voiceSelect.id = 'voiceSelect';
     voiceSelect.className = 'voice-dropdown';
-    document.querySelector('.voice-selection').insertBefore(voiceSelect, document.querySelector('.voice-grid'));
+    document.querySelector('.voice-selection').appendChild(voiceSelect);
 
     // Function to load and display available voices
     function loadVoices() {
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Add default option
         const defaultOption = document.createElement('option');
-        defaultOption.textContent = 'Select a system voice...';
+        defaultOption.textContent = 'Select a voice...';
         defaultOption.value = '';
         voiceSelect.appendChild(defaultOption);
         
@@ -61,42 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
             synth.cancel();
             synth.speak(utterance);
         }
-    });
-
-    // Handle voice card selection
-    document.querySelectorAll('.voice-card').forEach(card => {
-        card.addEventListener('click', () => {
-            document.querySelectorAll('.voice-card').forEach(c => 
-                c.classList.remove('selected'));
-            card.classList.add('selected');
-            
-            const voiceType = card.querySelector('.preview-btn').getAttribute('data-voice');
-            if (voiceType === 'female') {
-                selectedVoice = synth.getVoices().find(v => v.name.includes('female') || v.name.includes('Female'));
-            } else {
-                selectedVoice = synth.getVoices().find(v => v.name.includes('male') || v.name.includes('Male'));
-            }
-        });
-    });
-
-    // Preview voice buttons
-    document.querySelectorAll('.preview-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const voiceType = button.getAttribute('data-voice');
-            const utterance = new SpeechSynthesisUtterance("Hello, this is my voice.");
-            
-            if (voiceType === 'female') {
-                utterance.pitch = 1.2;
-                utterance.rate = 1.0;
-            } else {
-                utterance.pitch = 0.8;
-                utterance.rate = 0.95;
-            }
-            
-            synth.cancel();
-            synth.speak(utterance);
-        });
     });
 
     // Update character count
@@ -149,7 +113,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    downloadBtn.addEventListener('click', () => {
-        alert('Download functionality requires server-side implementation');
+    // Download MP3 (new code)
+    downloadBtn.addEventListener('click', async () => {
+        if (!window.generatedSpeech) return;
+        
+        try {
+            const response = await fetch('http://localhost:5000/generate-speech', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    text: textInput.value
+                })
+            });
+            
+            if (!response.ok) throw new Error('Failed to generate speech');
+            
+            // Get the blob from the response
+            const blob = await response.blob();
+            
+            // Create download link
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'speech.mp3';
+            document.body.appendChild(a);
+            a.click();
+            
+            // Cleanup
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to download MP3. Please try again.');
+        }
     });
 });
